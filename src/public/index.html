@@ -5,21 +5,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>LetsTalk</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.png">
 </head>
 
 <body>
-    <p>Hello this is chat app.</p>
 
-    <form id="form_1">
-        <label for="userinput">Enter message</label>
-        <input name="message" id="userinput" type="text">
-        <button id="message_send" type="submit">Send message</button>
-    </form>
-    <button id="location">Share my location</button>
+    <div class="centered-form">
+        <div class="centered-form__box">
+            <h1>Join</h1>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/chat.js"></script>
+            <form action="./chat.html">
+                <label for="username">Display Name</label>
+                <input name="username" id="username" type="text" placeholder="Display Name">
+
+                <label for="chat-room">Chat Room</label>
+                <input name="chat_room" id="chat-rom" type="text" placeholder="Chat Room" required>
+
+                <button type="submit">Join</button>
+            </form>
+        </div>
+    </div>
+   
 </body>
 
 </html>
