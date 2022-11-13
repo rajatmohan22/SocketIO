@@ -33,16 +33,16 @@ const addUser = ({id,username,chat_room})=>{
 }
 
 const removeUser = (id)=>{
-
+    
     const index = users.findIndex((user)=>{
-        return id == user.id
+        return id === user.id
     })
 
-    if(index==-1){
-        return {"error": 'User not found with the given id'}
-    } else{
-        users.splice(index,1)[0]
-    }
+    console.log(index)
+    const rUser =  users.splice(index,1)[0] //rUser - Removed User.
+    if(rUser) {; console.log(rUser);return rUser}
+    else return -1
+
 }
 
 const getUser = id=> users.find(user=>user.id === id)
@@ -70,6 +70,10 @@ const getUsersInRoom = (room_name)=>{
 //     username: 'Johnny',
 //     chat_room: 'Boston'
 // })
+
+// // const {removedUser,error} = removeUser(3);
+// console.log('Removed user',removeUser(3))
+// console.log(users)
 
 // console.log(users)
 // const gotUser = getUsersInRoom('Boston')

@@ -26,45 +26,58 @@ io.on('connection',(socket)=>{
             return callback(error)
         }
 
-        console.log(newUser)
-        socket.join(chat_room)
+        // console.log(newUser)
+        socket.join(newUser.chat_room)
         
-        socket.emit('sentMessage',messageFunc(`Welcome to ${newUser.chat_room}`))
-        socket.broadcast.to(chat_room).emit('sentMessage',messageFunc(`${newUser.username} has joined the chat`))
+        socket.emit('sentMessage',messageFunc({...newUser,username:'Admin'},`Welcome to ${newUser.chat_room}`))
+        socket.broadcast.to(newUser.chat_room).emit('sentMessage',{...messageFunc(newUser,`${newUser.username} has joined the chat`),username: 'Admin'})
         callback()
-    
+
+        io.to(newUser.chat_room).emit('roomData',{
+            room: newUser.chat_room,
+            roomUsers: getUsersInRoom(newUser.chat_room)
+        })
+     
     })
-    
+
+
+
     socket.on('sentMessage',(message,ack)=>{
 
         console.log(socket.id)
-
         const newUser = getUser(socket.id)
-        console.log(newUser)
-        const modifiedMessage = messageFunc(message)
+        // console.log(newUser,'from the server')
+        const {username,chat_room} = newUser
+        const modifiedMessage = messageFunc(newUser,message)
         const checkBad = new Filter()
         if (checkBad.isProfane(modifiedMessage.text)){
             return ack('Profanity not allowed')
         }
-        io.to(newUser.chat_room).emit('sentMessage',modifiedMessage)
+        io.to(chat_room).emit('sentMessage',modifiedMessage)
         ack()
     });
 
     socket.on('disconnect',()=>{
 
-        const user =  removeUser(socket.id)
+        const rUser = removeUser(socket.id)
+        // console.log({...rUser,username:'Admin'},'From server')
 
-        if(user){
-            io.to(user.chat_room).emit('sentMessage',messageFunc(`${user.username} left`))
+        /// {id: 'bdjei32', username: 'Rajat', chat_room: 'mohan'}
+        
+
+        if(rUser){
+            io.to(rUser.chat_room).emit('sentMessage',messageFunc({...rUser,username:'Admin'},`${rUser.username} left`))
         }
-
+ 
        })
 
     socket.on('sendLocation',(location,ack2)=>{
-        console.log(location)
+        console.log('From chat app',location)
+        const user = getUser(socket.id)
+        // console.log(location)
         const {lat,long} = location
 
-        io.emit('sendLocation',locationFunc(`https://maps.google.com/?q=${lat},${long}`))
+        io.to(user.chat_room).emit('sendLocation',locationFunc(user,`https://maps.google.com/?q=${lat},${long}`))
         ack2()
     })
 })

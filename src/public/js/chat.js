@@ -9,13 +9,18 @@ const $messages = document.querySelector('#messages')
 // const $locations_share = document.querySelector('#location-share')
 const $messageTemplate = document.querySelector('#message-template').innerHTML
 const $locationTemplate = document.querySelector('#location-template').innerHTML
-
+console.log(document.querySelector('#sidebar-template'))
+const $sideBarTemplate = document.querySelector('#sidebar-template').innerHTML
+console.log($sideBarTemplate)
 const {username,chat_room} = Qs.parse(location.search,{ignoreQueryPrefix:true})
-console.log(username,chat_room)
+// console.log(username,chat_room)
+
+
 socket.on('sentMessage',(message)=>{
-    const {text,createdAt} = message
-    console.log(text,createdAt)
+
+    const {username,text,createdAt} = message
     const html = Mustache.render($messageTemplate,{
+        username:username,
         message: text,
         createdAt
     })
@@ -26,6 +31,16 @@ socket.on('sendLocation',(location)=>{
     console.log(location)
     const lochtml = Mustache.render($locationTemplate,location)
     $messages.insertAdjacentHTML('beforeend',lochtml)
+})
+
+socket.on('roomData',({room,roomUsers})=>{
+    console.log(room,roomUsers)
+    const roomhtml = Mustache.render($sideBarTemplate,{
+        room,
+        roomUsers
+    })
+    document.querySelector('#sidebar').innerHTML = roomhtml
+
 })
 
 $form_1.addEventListener('submit',(e)=>{
